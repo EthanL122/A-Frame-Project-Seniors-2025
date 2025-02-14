@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Search</title>
+  
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-environment-component@1.3.2/dist/aframe-environment-component.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@fb96ab2/dist/aframe-extras.min.js"></script>
+  <script src="https://cdn.rawgit.com/donmccurdy/aframe-physics-system/v3.3.0/dist/aframe-physics-system.min.js"></script>
+  <script src="rock.js"></script>
+  <script src="lamp.js"></script>
+  <link href="style.css" rel="stylesheet" type="text/css" />
+  <style>
+    #gameBanner {
+      background-color: blue;
+      color: white;
+      text-align: center;
+      padding: 10px 0;
+      position: fixed;
+      top: 0;
+      width: 100%;
+    }
+
+    #gameContainer {
+      display: none;
+      margin-top: 50px;  /* Ensure the game content does not overlap with the banner */
+    }
+  </style>
+</head>
+
+<body>
+  <div id="gameBanner">
+    <h1>The Search</h1>
+  </div>
+  
+  <div class="container" id="banner">
+    <h1>The Search</h1>
+  </div>
+  <div class="container" id="body">
+    <div id="description">
+      <p>Your current goal is to find all of the scattered keys that are around the map. Here are some tips that you should pay attention to:</p>
+      <ol>
+        <li>Keep a close EYE on things!</li>
+        <li>Try interacting with objects who knows they might do something!</li>
+      </ol>
+      <p>
+       Currently only works on pc it's not mobile supported :(
+      </p>
+      <button onclick="startGame()" class="button">Start The Search</button>
+    </div>
+  </div>
+
+  <div id="gameContainer">
+    <a-scene environment="preset: forest" physics="gravity: -9.8" fog="type: exponential; color: #fff; density: 0.1">
+      <a-assets>
+        <img id="stone" src="stone.jpg" />
+      </a-assets>
+
+      <!-- Ground plane -->
+      <a-plane position="0 -0.5 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4" static-body></a-plane>
+
+      <!-- Camera -->
+      <a-entity camera position="0 1.6 0" look-controls wasd-controls>
+        <a-cursor color="red"></a-cursor>
+      </a-entity>
+    </a-scene>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const scene = document.querySelector('a-scene');
+
+      // Red Rock (fixed)
+      const flippableRock = new Rock(1, 0, -3, true);
+      scene.appendChild(flippableRock);
+
+      // Grey rocks (broken needs to be fixed)
+      for (let i = -10; i <= 10; i += 2) {
+        for (let j = -10; j <= 10; j += 2) {
+          if (Math.abs(i) > 5 || Math.abs(j) > 5) {
+            const rock = new Rock(i, 0, j);
+            scene.appendChild(rock);
+          }
+        }
+      }
+
+      // Create a lamp
+      const lamp = new Lamp(0, 0, 5);
+      scene.appendChild(lamp.obj);
+    });
+
+    function startGame() {
+      document.getElementById("body").style.display = "none";
+      document.getElementById("gameContainer").style.display = "block";
+    }
+  </script>
+</body>
+</html>
