@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const labels = ['1', '2', '3', '4', '5', '6', '7'];  // Labels for the rocks 1-7
+  const labels = ['1', '2', '3', '4', '5', '6', '7'];  // Labels for the rocks
   const positions = [
     {x: -2, z: -3}, {x: 2, z: -3}, {x: -3, z: 2}, {x: 3, z: 2},
     {x: -5, z: -5}, {x: 5, z: -5}, {x: -4, z: 4}, {x: 4, z: 4}
@@ -44,6 +44,11 @@ document.addEventListener("DOMContentLoaded", function () {
       // Random rotation
       let a = Math.random() * 360;
       rock.setAttribute("rotation", `${a} ${a} ${a}`);
+
+      // If the rock is labeled 1, 3, 5, or 7, alert the player
+      if (['1', '3', '5', '7'].includes(label)) {
+        alert(`Watch out! Rock ${label} is a Boom rock!`);
+      }
 
       // Event listener for clicking the rock
       rock.addEventListener("click", () => this.handleClick(rock));
