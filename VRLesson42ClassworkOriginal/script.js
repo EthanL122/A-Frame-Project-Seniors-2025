@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       let rock = document.createElement("a-entity");
       rock.setAttribute("geometry", "primitive: dodecahedron");
-      rock.setAttribute("position", `${x} ${y} ${z}`);  // Fixed template literal
+      rock.setAttribute("position", ${x} ${y} ${z});
 
       // Create a text element for the label
       let text = document.createElement("a-text");
@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // Random rotation
       let a = Math.random() * 360;
-      rock.setAttribute("rotation", `${a} ${a} ${a}`);  // Fixed template literal
+      rock.setAttribute("rotation", ${a} ${a} ${a});
 
       // Event listener for clicking the rock
       rock.addEventListener("click", () => this.handleClick(rock));
@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // If it's the correct next rock in the sequence (2 -> 4 -> 6)
       if (safeRocksSequence[currentSafeRockIndex] === rockLabel) {
-        alert(`You safely clicked rock ${rockLabel}!`);  // Fixed template literal
+        alert(You safely clicked rock ${rockLabel}!);
         clickedRocks.add(rockLabel); // Add clicked rock to the set
 
         // If it's the last safe rock (rock 6)
@@ -88,10 +88,10 @@ document.addEventListener("DOMContentLoaded", function () {
       let currentPosition = rock.getAttribute("position");
 
       if (!this.isUp) {
-        rock.setAttribute("animation__flip", `property: rotation; to: ${currentRotation.x + 60} ${currentRotation.y + 50} ${currentRotation.z + 60}; dur: 1000; easing: easeInOutQuad`);  // Fixed template literal
-        rock.setAttribute("animation__move", `property: position; to: ${this.x} ${this.y + 1} ${this.z}; dur: 1000; easing: easeInOutQuad`);  // Fixed template literal
+        rock.setAttribute("animation__flip", property: rotation; to: ${currentRotation.x + 60} ${currentRotation.y + 50} ${currentRotation.z + 60}; dur: 1000; easing: easeInOutQuad);
+        rock.setAttribute("animation__move", property: position; to: ${this.x} ${this.y + 1} ${this.z}; dur: 1000; easing: easeInOutQuad);
       } else {
-        rock.setAttribute("animation__move", `property: position; to: ${this.x} ${this.y} ${this.z}; dur: 1000; easing: easeInOutQuad`);  // Fixed template literal
+        rock.setAttribute("animation__move", property: position; to: ${this.x} ${this.y} ${this.z}; dur: 1000; easing: easeInOutQuad);
       }
       this.isUp = !this.isUp;
     }
@@ -107,4 +107,4 @@ document.addEventListener("DOMContentLoaded", function () {
     let camera = document.querySelector("a-entity[camera]");
     camera.setAttribute("position", "0 1.6 0");
   }
-});
+});  
