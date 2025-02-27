@@ -10,7 +10,6 @@
   <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@fb96ab2/dist/aframe-extras.min.js"></script>
   <script src="https://cdn.rawgit.com/donmccurdy/aframe-physics-system/v3.3.0/dist/aframe-physics-system.min.js"></script>
   <script src="rock.js"></script>
-  <script src="lamp.js"></script>
   <link href="style.css" rel="stylesheet" type="text/css" />
   <style>
     #gameBanner {
@@ -48,7 +47,7 @@
       <p>
        Currently only works on pc it's not mobile supported :(
       </p>
-      <button onclick="startGame()" class="button">Start The Search</button>
+      <button onclick="startGame()" class="button">Start the Game</button>
     </div>
   </div>
 
@@ -65,30 +64,28 @@
       <a-entity camera position="0 1.6 0" look-controls wasd-controls>
         <a-cursor color="red"></a-cursor>
       </a-entity>
+
+      <!-- Rocks will be added here dynamically -->
     </a-scene>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      const scene = document.querySelector('a-scene');
+      const colors = ['blue', 'green', 'yellow', 'pink', 'purple', 'black', 'gray'];
+      const positions = [
+        {x: -2, z: -3}, {x: 2, z: -3}, {x: -3, z: 2}, {x: 3, z: 2},
+        {x: -5, z: -5}, {x: 5, z: -5}, {x: -4, z: 4}, {x: 4, z: 4}
+      ];
 
-      // Red Rock (fixed)
-      const flippableRock = new Rock(1, 0, -3, true);
-      scene.appendChild(flippableRock);
-
-      // Grey rocks (broken needs to be fixed)
-      for (let i = -10; i <= 10; i += 2) {
-        for (let j = -10; j <= 10; j += 2) {
-          if (Math.abs(i) > 5 || Math.abs(j) > 5) {
-            const rock = new Rock(i, 0, j);
-            scene.appendChild(rock);
-          }
-        }
-      }
-
-      // Create a lamp
-      const lamp = new Lamp(0, 0, 5);
-      scene.appendChild(lamp.obj);
+      // Get the A-Frame scene
+      const scene = document.querySelector("a-scene");
+      
+      // Create flippable colored rocks
+      colors.forEach((color, index) => {
+        const position = positions[index];
+        const rock = new Rock(position.x, 0, position.z, false, color);
+        scene.appendChild(rock);  // Append the created rock to the scene
+      });
     });
 
     function startGame() {
