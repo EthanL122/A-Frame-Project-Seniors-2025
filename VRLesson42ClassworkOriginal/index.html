@@ -23,7 +23,7 @@
 
     #gameContainer {
       display: none;
-      margin-top: 50px;  /* Ensure the game content does not overlap with the banner */
+      margin-top: 50px;
     }
   </style>
 </head>
@@ -41,6 +41,8 @@
       <p>Your goal is to uncover all the rocks without blowing up, care to test your luck?:</p>
       <ol>
         <li>Some rocks look pretty suspicious maybe it's best to leave them alone...</li>
+        <li>You have only one win condition you must click on a rock without blowing up just like in real life 
+        </li>
         <li>To interact with the rocks left click on them who knows they might really do something?</li>
       </ol>
       <p>
@@ -60,62 +62,97 @@
       <a-plane position="0 -0.5 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4" static-body></a-plane>
 
       <!-- Camera -->
-      <a-entity id="camera" camera position="0 1.6 0" look-controls wasd-controls>
+      <a-entity camera position="0 1.6 0" look-controls wasd-controls id="camera">
         <a-cursor color="red"></a-cursor>
       </a-entity>
 
-      <!-- Rocks will be added here dynamically -->
+      
     </a-scene>
   </div>
 
   <script>
+    let gameOver = false;
+    const clickedRocks = new Set();  // Keep track of clicked rocks
+    const safeRocksSequence = ['2', '4', '6'];  // Sequence of safe rocks to click
+
+    function startGame() {
+      document.getElementById("banner").style.display = "none";
+      document.getElementById("body").style.display = "none";
+      document.getElementById("gameContainer").style.display = "block";
+
+      const labels = ['1', '2', '3', '4', '5', '6', '7'];  // Labels for the rocks
+      const positions = [
+        {x: -2, z: -3}, {x: 2, z: -3}, {x: -3, z: 2}, {x: 3, z: 2},
+        {x: -5, z: -5}, {x: 5, z: -5}, {x: -4, z: 4}, {x: 4, z: 4}
+      ];
+
+      const scene = document.querySelector("a-scene");
+
+      // Create labeled rocks
+      labels.forEach((label, index) => {
+        const position = positions[index];
+        const rock = new Rock(position.x, 0, position.z, label);
+        scene.appendChild(rock);  // Add the rock to the scene
+      });
+    }
+
     class Rock {
       constructor(x, y, z, label) {
         let rock = document.createElement("a-entity");
         rock.setAttribute("geometry", "primitive: dodecahedron");
         rock.setAttribute("position", `${x} ${y} ${z}`);
         
-        // Add label as text to the rock
+        // Create a text element for the label
         let text = document.createElement("a-text");
-        text.setAttribute("value", label);
+        text.setAttribute("value", label);  // Set the label to the rock's number (1-7)
         text.setAttribute("align", "center");
         text.setAttribute("color", "#FFFFFF");
-        text.setAttribute("position", "0 0.5 0"); // Position it slightly above the rock
-        
-        rock.appendChild(text); // Attach the label to the rock entity
+        text.setAttribute("position", "0 0.5 0"); // Position the label slightly above the rock
+        rock.appendChild(text);  // Attach the text label to the rock entity
         
         // Random rotation
         let a = Math.random() * 360;
         rock.setAttribute("rotation", `${a} ${a} ${a}`);
-        
+
         // Track if the rock is flipped
         let isUp = false;
-        
-        // Event listener for flipping and moving the rock
+
+        // Event listener for clicking the rock
         rock.addEventListener("click", function () {
+          // Prevent further action if the game is over
+          if (gameOver) return;
+
+          let rockLabel = label;  // Use label directly as a string
+
+          // Check if it's a "Boom" rock (1, 3, 5, 7) and end the game if clicked
+          if (['1', '3', '5', '7'].includes(rockLabel)) {
+            alert("Boom, you died!");
+            gameOver = true;  // End the game
+            resetGame();  // Reset the game state
+            return;  // Exit early to prevent further actions
+          }
+
+          // If it's the correct next safe rock in the sequence (2 -> 4 -> 6)
+          if (safeRocksSequence.includes(rockLabel) && !clickedRocks.has(rockLabel)) {
+            alert(`You safely clicked rock ${rockLabel}!`);
+
+            // Add the clicked rock to the set
+            clickedRocks.add(rockLabel);
+
+            // If all required safe rocks have been clicked
+            if (clickedRocks.size === safeRocksSequence.length) {
+              alert("Congrats you beat the game!");  // Victory message
+              gameOver = true;  // End the game
+            }
+          } else {
+            // If it's not the correct safe rock in sequence or already clicked
+            alert("Incorrect rock clicked, try again!");
+          }
+
+          // Flip the rock and move it
           let currentRotation = rock.getAttribute("rotation");
           let currentPosition = rock.getAttribute("position");
 
-          // Get the rock label
-          let rockLabel = parseInt(label);
-
-          // Check if it's a "Boom" rock (1, 3, 5, 7)
-          if (rockLabel === 1 || rockLabel === 3 || rockLabel === 5 || rockLabel === 7) {
-            alert("Boom, you died!");
-
-            // Reset camera position to simulate death
-            let camera = document.querySelector("#camera");
-            camera.setAttribute("position", "0 1.6 0"); // Reset to starting position
-          } else if (rockLabel === 2 || rockLabel === 4 || rockLabel === 6) {
-            alert("You didn't blow up yay!");
-
-            // Check if all the boom rocks (1, 3, 5, 7) have been clicked
-            if (clickedBoomRocks.length === 0) {
-              alert("Congrats you beat the game!");
-            }
-          }
-          
-          // Flip the rock
           if (!isUp) {
             rock.setAttribute("animation__flip", `property: rotation; to: ${currentRotation.x + 60} ${currentRotation.y + 50} ${currentRotation.z + 60}; dur: 1000; easing: easeInOutQuad`);
             rock.setAttribute("animation__move", `property: position; to: ${x} ${y + 1} ${z}; dur: 1000; easing: easeInOutQuad`);
@@ -129,30 +166,9 @@
       }
     }
 
-    // Track clicked boom rocks
-    let clickedBoomRocks = [];
-
-    document.addEventListener("DOMContentLoaded", function () {
-      const labels = ['1', '2', '3', '4', '5', '6', '7'];  // Labels for the rocks
-      const positions = [
-        {x: -2, z: -3}, {x: 2, z: -3}, {x: -3, z: 2}, {x: 3, z: 2},
-        {x: -5, z: -5}, {x: 5, z: -5}, {x: -4, z: 4}, {x: 4, z: 4}
-      ];
-
-      // Get the A-Frame scene
-      const scene = document.querySelector("a-scene");
-
-      // Create labeled rocks
-      labels.forEach((label, index) => {
-        const position = positions[index];
-        const rock = new Rock(position.x, 0, position.z, label);
-        scene.appendChild(rock);  // Add the rock to the scene
-      });
-    });
-
-    function startGame() {
-      document.getElementById("body").style.display = "none";
-      document.getElementById("gameContainer").style.display = "block";
+    function resetGame() {
+      // Reset game-related states, can implement logic to restart the game here if desired.
+      clickedRocks.clear();  // Clear clicked rocks
     }
   </script>
 </body>
