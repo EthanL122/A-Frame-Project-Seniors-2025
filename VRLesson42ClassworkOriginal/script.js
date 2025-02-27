@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const labels = ['1', '2', '3', '4', '5', '6', '7'];  // Labels for the rocks
+  const labels = ['1', '2', '3', '4', '5', '6', '7'];  // Labels for the rocks 1-7
   const positions = [
     {x: -2, z: -3}, {x: 2, z: -3}, {x: -3, z: 2}, {x: 3, z: 2},
     {x: -5, z: -5}, {x: 5, z: -5}, {x: -4, z: 4}, {x: 4, z: 4}
