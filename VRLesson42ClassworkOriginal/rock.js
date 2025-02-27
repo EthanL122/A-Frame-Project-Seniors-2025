@@ -37,7 +37,7 @@ class Rock {
 
     // Check if it's a "Boom" rock (1, 3, 5, 7) and end the game if clicked
     if (['1', '3', '5', '7'].includes(rockLabel)) {
-      alert("Boom, you died!");
+      alert("Boom, you died!"); // This alert should now be triggered when clicking these rocks
       gameOver = true;  // End the game
       resetGame();  // Reset the game state
       return;  // Exit early to prevent further actions
